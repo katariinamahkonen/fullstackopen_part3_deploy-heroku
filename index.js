@@ -35,7 +35,7 @@ const cors = require('cors')
 //==================================================================================================//
 //  MIDDLEWARE:
 
-app.use(cors())
+
 app.use(express.json())
 morgan.token('requestbody', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :requestbody'))
@@ -91,7 +91,7 @@ app.post('/api/persons', (request, response) => {
 
 //==================================================================================================//
 //  MIDDLEWARE:
-
+app.use(cors())
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
