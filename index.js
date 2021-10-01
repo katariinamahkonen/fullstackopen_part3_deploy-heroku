@@ -2,36 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const BSON = require('bson');
-
-/*
-let phonebook = [
-  { 
-    "id": 1,
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": 2,
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": 3,
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": 4,
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  },
-  {
-    "id": 5,
-    "name": "Huu Haa",
-    "number": "1234567"
-  }
-]
-*/
 const app = express()
 const cors = require('cors')
 
@@ -45,10 +15,7 @@ app.use(express.json())
 morgan.token('requestbody', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :requestbody'))
 
-
-
 const Person = require('./models/person')
-//const { Mongoose } = require('mongoose')
 
 //==================================================================================================//
 //  ROUTES:
@@ -85,7 +52,6 @@ app.get('/api/persons', (request,response,next) => {
     .catch(err => {
       console.log(err)
       next(err)
-      //response.status(500).end()  // 500: 'internal server error'  // 400:'bad request'
     })
 })
 
@@ -152,12 +118,17 @@ app.post('/api/persons', (request, response, next) => {
     })
     person.save()
       .then(result => {
-        console.log('New person saved.')
+        console.log('New person saved successfully to database.')
+        response.send(request.body)
       })
       .catch(err => {
         console.log(err)
         next(err)
       })
+  }
+  else
+  {
+    response.status(400).end() //bad request
   }
 })
 /*
@@ -189,9 +160,10 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   } 
   next(error)
 }
