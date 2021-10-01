@@ -7,6 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
     "build:ui": "cd ../fullstackopen/part3/phonebook/ && rm -rf .cache .tmp lib build && npm run build --prod && cp -r build/* ../../../fullstackopen_part3/UIbuild/"
   },
   "repository": {
@@ -26,6 +27,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^7.32.0",
     "nodemon": "^2.0.12"
   }
 }

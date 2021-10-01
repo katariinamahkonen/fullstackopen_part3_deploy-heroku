@@ -15,17 +15,17 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-    name: { type: String, minLength: 3, required: true, unique:true },
-    number: { 
-      type: String, 
-      validate: {
-        validator: function(v) {
-          return /^(\d|\d\s*){8,15}$/.test(v);
-        },
-        message: props => `${props.value} is not a valid phone number. Must be 8-15 digits!`
+  name: { type: String, minLength: 3, required: true, unique:true },
+  number: {
+    type: String,
+    validate: {
+      validator: function(v) {
+        return /^(\d|\d\s*){8,15}$/.test(v)
       },
-      required:true
-    }
+      message: props => `${props.value} is not a valid phone number. Must be 8-15 digits!`
+    },
+    required:true
+  }
 })
 personSchema.plugin(uniqueValidator)
 
@@ -39,8 +39,8 @@ personSchema.set('toJSON', {
 
 process.on('SIGINT', function() {
   mongoose.connection.close(function () {
-    console.log('Mongoose disconnected on app termination');
-    process.exit(0);
+    console.log('Mongoose disconnected on app termination')
+    process.exit(0)
   })
 })
 
