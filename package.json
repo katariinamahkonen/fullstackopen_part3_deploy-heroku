@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "build:ui": "cd ../fullstackopen/part3/phonebook/ && rm -rf .cache .tmp lib build && npm run build --prod && cp -r build/* ../../../fullstackopen_part3/UIbuild/"
+    "buildui": "cd ../fullstackopen/part3/phonebook/ && rm -rf .cache .tmp lib build && npm run build --prod && cp -r build ../../../fullstackopen_part3/",
+    "gitpush": "git add . && git commit -m uibuild && git push && git push heroku main"
   },
   "repository": {
     "type": "git",

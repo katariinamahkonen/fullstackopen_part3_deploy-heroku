@@ -1,78 +1,61 @@
 const express = require('express')
-var morgan = require('morgan')
-
 const cors = require('cors')
+const Person = require('./models/person')
 
 
+/* Loggaus jokaisen kutsun yhteydessä: */
+var morgan = require('morgan')
 morgan.token('requestbody', function (req, res) { return JSON.stringify(req.body) })
-
-
 
 
 const app = express()
 
 app.use(cors())
-
-app.use(express.static('build'))
-
-
+app.use(express.json()) 
+app.use(express.static('build'))   /* UI/frontend */
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :requestbody'))
-
-app.use(express.json())  
  
-
-let persons = [
-      { 
-        "name": "Arto Hellas", 
-        "number": "040-123456",
-        "id": 1
-      },
-      { 
-        "name": "Ada Lovelace", 
-        "number": "39-44-5323523",
-        "id": 2
-      },
-      { 
-        "name": "Dan Abramov", 
-        "number": "12-43-234345",
-        "id": 3
-      },
-      { 
-        "name": "Mary Poppendieck", 
-        "number": "39-23-6423122",
-        "id": 4
-      }
-    ]
-
+ 
 
 /********************************************************************/
 
 
 app.get('/info', (req,res) => {
 
-    const date = new Date()
-
-    const html = `<p>Phonebook has info for ${persons.length} people</p>` + 
-                 `<p> ${date.toString()}</p>`
-    return res.send(html)
+    Person.find({})
+    .then(resp => {
+        const date = new Date()
+        const html = `<p>Phonebook has info for ${resp.length} people</p>` + 
+                    `<p> ${date.toString()}</p>`
+        return res.send(html)
+    })
+    .catch(error => next(error))
 })
 
 
-app.get('/api/persons', (req, res) => {
-    return res.json(persons)
+app.get('/api/persons', (req, res, next) => {
+    Person.find({})
+    .then(resp => {
+        res.json(resp)
+    })
+    .catch(error => next(error))
 })
 
-app.post('/api/persons', (req,res) => {
+app.post('/api/persons', (req,res,next) => {
     if (req.body.name && req.body.number && req.body.name.length>0 && req.body.number.length>0) {
-        const found = persons.find(p => p.name === req.body.name)
-        if (!found) {
-            const person = {
+        /* const found = persons.find(p => p.name === req.body.name)  */
+        if (true/*!found*/) {
+            const person = new Person({
                 name:req.body.name, 
-                number:req.body.number,
-                id:Math.floor(Math.random()*10**12)
-            }
-            persons.push(person);
-            return res.json(person)
+                number:req.body.number 
+            })
+            person.save(person)
+            .then((reply) => {
+                console.log(reply)
+                return res.json(person)
+            })
+            .catch(err => next(err))
+
         } else {
             return res.status(400).json({error:'Person already in phonebook!'})
         }
@@ -81,22 +64,31 @@ app.post('/api/persons', (req,res) => {
     }
 })
 
-app.get('/api/persons/:id', (req,res) => {
-    const id = Number(req.params.id)
-    const found = persons.find(p => p.id === id)
-
-    if (found) {
-        return res.json(found)
-      } else {
-        return res.status(404).end()
-      }
+app.get('/api/persons/:id', (req,res,next) => {
+    const id = req.params.id
+    Person.findById(id)
+    .then(reply => res.json(reply))
+    .catch(err => next(err))
 })
 
-app.delete('/api/persons/:id', (req,res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(p => p.id !== id)
-  
-    return res.status(204).end()
+app.put('/api/persons/:id',(req,res,next) => {
+    const id = req.params.id
+    const person = req.body
+    if (person) {
+       Person.findByIdAndUpdate(id,person,{new:true})
+       .then(updated => {
+            res.json(updated)
+       })
+       .catch(err => next(err))
+    } 
+})
+
+app.delete('/api/persons/:id', (req,res,next) => {
+    const id = req.params.id
+    console.log(id)
+    Person.findByIdAndRemove(id)
+    .then( res.send())
+    .catch(err => next(err))  
 })
 
 /********************************************************************
@@ -108,6 +100,25 @@ const unknownEndpoint = (request, response) => {
   }
   
 app.use(unknownEndpoint)
+
+/********************************************************************/
+// tämä tulee kaikkien muiden middlewarejen rekisteröinnin jälkeen!
+
+const mongoOperationErrorHandler = (error, request, response, next) => {
+    console.error('Error from  mongoOperationErrorHandler middleware:')
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    } 
+    else if (error.name === 'ValidationError') {
+        
+        return response.status(400).json({ error: error.message })
+    }
+    next(error)
+}
+  
+app.use(mongoOperationErrorHandler)
 
 /********************************************************************/
 
