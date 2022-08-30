@@ -7,10 +7,21 @@ content-type: application/json
 }
 
 ###
-GET http://localhost:3001/api/persons/4 HTTP/1.1
+GET http://localhost:3001/api/persons/ HTTP/1.1
+
+###
+GET http://localhost:3001/api/persons/6308862325f661508c82d4d HTTP/1.1
+
+###
+PUT http://localhost:3001/api/persons/630886f0f4eaf12038b91501
+content-type: application/json
+
+{ "name":"Pelle",
+  "number":"54321"
+}
 
 ###
 GET http://localhost:3001/info HTTP/1.1
 
 ###
-DELETE http://localhost:3001/api/persons/2 HTTP/1.1
+DELETE http://localhost:3001/api/persons/6308860e01ad9b5420f7399b HTTP/1.1

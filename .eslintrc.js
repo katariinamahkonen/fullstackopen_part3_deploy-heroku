@@ -1,39 +1,43 @@
+/* eslint-disable linebreak-style */
 module.exports = {
-  'env': {
-    'commonjs': true,
-    'es2021': true,
-    'node': true
-  },
-  'extends': 'eslint:recommended',
-  'parserOptions': {
-    'ecmaVersion': 12
-  },
-  'rules': {
-    'eqeqeq': 'error',
-    'no-trailing-spaces':'error',
-    'object-curly-spacing': [
-      'error', 'always'
+    'env': {
+        'browser': false,
+        'node':true,
+        'commonjs': true,
+        'es2021': true
+    },
+    'extends': [
+        'eslint:recommended',
+        'plugin:react/recommended'
     ],
-    'arrow-spacing': [
-      'error', { 'before': true, 'after': true }
+    'overrides': [
     ],
-    'indent': [
-      'error',
-      2
+    'parserOptions': {
+        'ecmaVersion': 'latest'
+    },
+    'plugins': [
+        'react'
     ],
-    'linebreak-style': [
-      'error',
-      'unix'
-    ],
-    'quotes': [
-      'error',
-      'single'
-    ],
-    'semi': [
-      'error',
-      'never'
-    ],
-    'no-console': 0,
-    'no-unused-vars': ['error', { 'vars': 'all', 'args': 'none', 'ignoreRestSiblings': false }]
-  }
+    'rules': {
+        'indent': [
+            'error',
+            4
+        ],
+        'quotes': [
+            'error',
+            'single'
+        ],
+        'semi': [
+            'error',
+            'never'
+        ],
+        'eqeqeq': 'error',
+        'no-trailing-spaces': 'error',
+        'object-curly-spacing': [
+            'error', 'always'
+        ],
+        'arrow-spacing': [
+            'error', { 'before': true, 'after': true }
+        ]
+    }
 }
